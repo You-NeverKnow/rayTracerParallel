@@ -6,11 +6,32 @@ public class Vector {
 	float z;
 	float w;
 
+	Vector() {
+		this.x = 0;
+		this.y = 0;
+		this.z = 0;
+		this.w = 1;
+	}
+
 	Vector(float x, float y, float z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.w = 1;
+	}
+
+	public void set(float x, float y, float z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.w = 1;
+	}
+
+	public void set(float arr[]) {
+		this.x = arr[0];
+		this.y = arr[1];
+		this.z = arr[2];
+		this.w = arr[3];
 	}
 
 	public Vector add(Vector point) {
@@ -45,6 +66,11 @@ public class Vector {
 		float z =   (this.x * b.y) - (b.x * this.y);
 
 		return new Vector(x,y,z);
+	}
+
+	public String toString() {
+		String res = "(" + this.x + "," + this.y + "," + this.z + this.w + ")";
+		return res;
 	}
 
 }

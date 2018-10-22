@@ -1,18 +1,19 @@
 package miscellaneous;
+
 /**
 	Always 4x4 matrices
 */
 public class Matrix {
-	int[][] data;
+	float[][] data;
 	int len[] = {4, 4};
 
 
 	Matrix() {
-		data = new int[4][4];
+		data = new float[4][4];
 	}
 
-	Matrix(int[][] mat) {
-		data = new int[4][4];
+	Matrix(float[][] mat) {
+		data = new float[4][4];
 		for (int row = 0; row < 4; row++) {
 			for (int col = 0; col < 4; col++) {
 				this.data[row][col] = mat[row][col];
@@ -20,18 +21,32 @@ public class Matrix {
 		}
 	}
 
-	public Matrix matmul(Matrix matrix) {
-		Matrix result = new Matrix();
+	/**
+	 *  pre-multiples Vector to matrix to  get 1x4 vector.
+	 *
+	 * @param vector: vector to premultiply
+	 * @return resultant vector
+	 */
+	public Vector preMultiply(Vector vector) {
 
-		for (int row = 0; row < result.len[0]; row++) {
-			for (int col = 0; col < result.len[1]; col++) {
-				result.data[row][col] = 0;
-				for (int k = 0; k < result.len[1]; k++) {
+		//convert vector to arr for easy multiplication
+		float vec[] = {vector.x, vector.y, vector.z, vector.w};
+
+		//result arr
+		float res[] = {0, 0, 0, 1};
+		Vector result = new Vector();
+
+		for (int row = 0; row < 1; row++) {
+			for (int col = 0; col < this.len[1]; col++) {
+				res[col] = 0;
+				for (int k = 0; k < this.len[0]; k++) {
 					//System.out.println(this.data[row][col] + "," + this.data[row])
-					result.data[row][col] += (this.data[row][k] * matrix.data[k][col]);
+					res[col] += (res[k] * this.data[k][col]);
 				}
 			}
 		}
+
+		result.set(res);
 
 		return result;
 	}
@@ -51,13 +66,14 @@ public class Matrix {
 
 	public static void main(String args[]) {
 
-		int[][] dat1 = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}};
-		int[][] dat2 = {{20, 21, 22, 23}, {24, 25, 26, 27}, {28, 29, 30, 31}, {32, 33, 34, 35}}; 
+		float[][] dat1 = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}};
+		float[] dat2 = {1, 2, 3, 4};
 
-		Matrix a = new Matrix(dat1);
-		Matrix b = new Matrix(dat2);
+		Vector a = new Vector();
+		a.set(dat2);
+		Matrix b = new Matrix(dat1);
 
-		Matrix c = a.matmul(b);
+		Vector c = b.preMultiply(a);
 
 		System.out.println(c);
 	}
