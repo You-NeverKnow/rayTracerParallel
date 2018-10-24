@@ -1,8 +1,13 @@
 package miscellaneous;
 
 public class Ray {
-    Vector origin;
-    Vector direction;
+    public Vector origin = new Vector();
+    public Vector direction = new Vector();
 
+    public Ray() {}
 
+    public Ray(Vector origin, Vector direction) {
+        this.origin = origin;
+        this.direction = direction;
+    }
 }
