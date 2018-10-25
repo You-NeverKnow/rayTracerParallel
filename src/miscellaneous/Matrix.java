@@ -1,5 +1,7 @@
 package miscellaneous;
 
+import java.beans.VetoableChangeListenerProxy;
+
 /**
 	Always 4x4 matrices
 */
@@ -41,7 +43,7 @@ public class Matrix {
 				res[col] = 0;
 				for (int k = 0; k < this.len[0]; k++) {
 					//System.out.println(this.data[row][col] + "," + this.data[row])
-					res[col] += (res[k] * this.data[k][col]);
+					res[col] += (VetoableChangeListenerProxy[k] * this.data[k][col]);
 				}
 			}
 		}
@@ -51,18 +53,18 @@ public class Matrix {
 		return result;
 	}
 
-	public String toString() {
-		String res = "";
-		for (int row = 0; row < this.len[0]; row++) {
-			res += "[";
-			for (int col = 0; col < this.len[1]; col++) {
-				res += this.data[row][col] + ", ";
-			}
-			res += "]";
-			res += "\n";
-		}
-		return res;
-	}
+	// public String toString() {
+	// 	String res = "";
+	// 	for (int row = 0; row < this.len[0]; row++) {
+	// 		res += "[";
+	// 		for (int col = 0; col < this.len[1]; col++) {
+	// 			res += this.data[row][col] + ", ";
+	// 		}
+	// 		res += "]";
+	// 		res += "\n";
+	// 	}
+	// 	return res;
+	// }
 
 	public static void main(String args[]) {
 

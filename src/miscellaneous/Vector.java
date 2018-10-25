@@ -69,7 +69,7 @@ public class Vector {
 	}
 
 	public String toString() {
-		String res = "(" + this.x + "," + this.y + "," + this.z + this.w + ")";
+		String res = "(" + this.x + "," + this.y + "," + this.z + "," + this.w + ")";
 		return res;
 	}
 
