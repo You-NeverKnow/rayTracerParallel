@@ -7,7 +7,15 @@ public class Ray {
     public Ray() {}
 
     public Ray(Vector origin, Vector direction) {
-        this.origin = origin;
-        this.direction = direction;
+        this.origin.set(origin);
+        this.direction.set(direction);
+    }
+
+    @Override
+    public String toString() {
+        return "Ray{" +
+                "origin=" + origin +
+                ", direction=" + direction +
+                '}';
     }
 }

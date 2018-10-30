@@ -2,11 +2,14 @@ package World;
 
 public class World {
     public WorldObject[] worldObjects;
-    public Light[] lights;
+    public WorldObject[] triangleLights;
+    public WorldObject[] debugLights;
 
     public void transform(double[][] transformMatrix) {
         for (WorldObject worldObject: worldObjects) {
             worldObject.transform(transformMatrix);
         }
+
+
     }
 }

@@ -5,7 +5,7 @@ public class Vector {
 	public double y;
 	public double z;
 
-	Vector() {
+	public Vector() {
 		this.x = 0;
 		this.y = 0;
 		this.z = 0;
@@ -35,10 +35,22 @@ public class Vector {
 						this.z + point.z);
 	}
 
-	public Vector multiply(float k) {
+    public void selfAdd(Vector point) {
+		this.x += point.x;
+        this.y += point.y;
+        this.z += point.z;
+	}
+
+	public Vector multiply(double k) {
 		return new Vector(this.x * k,
 						this.y * k,
 						this.z * k);
+	}
+
+	public void selfMultiply(double k) {
+		this.x *= k;
+		this.y *= k;
+		this.z *= k;
 	}
 
 	public double norm() {
@@ -58,19 +70,27 @@ public class Vector {
 	}
 
 	public String toString() {
-        return "(" + this.x + ", " + this.y + ", " + this.z + ")";
+        return "(" + String.format("%.2f", x) + ", " +
+                String.format("%.2f", y) + ", " +
+                String.format("%.2f", z) + ")";
 	}
 
 	public void normalize() {
-        double normValue = norm();
-	    x /= normValue;
-	    y /= normValue;
-	    z /= normValue;
+        double normValue = this.norm();
+	    this.x /= normValue;
+	    this.y /= normValue;
+	    this.z /= normValue;
 	}
 
 	public Vector subtract(Vector lookAt) {
 		return new Vector(this.x - lookAt.x, this.y - lookAt.y,
 				this.z - lookAt.z);
+	}
+
+    public void selfSubtract(Vector lookAt) {
+	    this.x -= lookAt.x;
+	    this.y -= lookAt.y;
+	    this.z -= lookAt.z;
 	}
 
     public void set(Vector other) {
@@ -81,32 +101,6 @@ public class Vector {
     }
 
     public void transform(double[][] transformMatrix) {
-//	    double x =    this.x * transformMatrix[0][0] +
-//                    this.y * transformMatrix[1][0] +
-//                    this.z * transformMatrix[2][0] +
-//                    transformMatrix[3][0];
-//
-//	    double y =    this.x * transformMatrix[0][1] +
-//                    this.y * transformMatrix[1][1] +
-//                    this.z * transformMatrix[2][1] +
-//                    transformMatrix[3][1];
-//
-//	    double z =    this.x * transformMatrix[0][2] +
-//                    this.y * transformMatrix[1][2] +
-//                    this.z * transformMatrix[2][2] +
-//                    transformMatrix[3][2];
-//
-//	    this.set(x, y, z);
-//        System.out.println("" + transformMatrix);
-
-//        // Debug
-//        for (int i = 0; i < transformMatrix.length; i++) {
-//            for (int j = 0; j < transformMatrix[i].length; j++) {
-//                System.out.printf("mat(%d, %d) = %1.2f", i, j, transformMatrix[i][j]);
-//                System.out.println();
-//            }
-//        }
-//        System.out.println();
         double vec[] = {x, y, z, 1};
         double result[] = {0, 0, 0};
 
