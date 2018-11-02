@@ -12,7 +12,6 @@ public class TriangleLight extends Triangle{
 
     @Override
     public void transform(double[][] transformMatrix) {
-        // Adding comment yay!
         super.transform(transformMatrix);
         this.direction.transform(transformMatrix);
     }
