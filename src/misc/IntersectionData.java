@@ -1,4 +1,4 @@
-package miscellaneous;
+package misc;
 
 import World.WorldObject;
 import edu.rit.image.Color;

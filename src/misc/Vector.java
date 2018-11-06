@@ -1,4 +1,4 @@
-package miscellaneous;
+package misc;
 
 public class Vector {
 	public double x;

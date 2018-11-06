@@ -5,9 +5,9 @@ import edu.rit.image.ColorArray;
 import edu.rit.image.ColorImageQueue;
 import edu.rit.image.ColorPngWriter;
 import edu.rit.util.Random;
-import miscellaneous.IntersectionData;
-import miscellaneous.Ray;
-import miscellaneous.Vector;
+import misc.IntersectionData;
+import misc.Ray;
+import misc.Vector;
 
 import java.io.*;
 
@@ -107,11 +107,12 @@ public class Camera {
         // TODO: ADD shadow ray and shading here
 
         if (hitData.hit) {
-            if (hitData.hitObject == world.triangleLights[0] ||
-                    hitData.hitObject == world.triangleLights[1]) {
+            // if (hitData.hitObject == world.triangleLights[0] ||
+            //         hitData.hitObject == world.triangleLights[1]) {
+            //     return hitData.color;
+            // }
+            // return getIllumination(hitData, world, sampler);
                 return hitData.color;
-            }
-            return getIllumination(hitData, world, sampler);
         }
         else {
             return new Color().rgb(0);

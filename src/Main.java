@@ -2,7 +2,7 @@ import World.World;
 import World.Sphere;
 import World.Triangle;
 import World.WorldObject;
-import miscellaneous.Vector;
+import misc.Vector;
 import java.io.IOException;
 
 /**
@@ -133,9 +133,6 @@ public class Main {
 
 	    world.triangleLights[0] = light1;
 	    world.triangleLights[1] = light2;
-
-
-
 
     }
 

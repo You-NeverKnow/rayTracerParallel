@@ -1,6 +1,6 @@
 package World;
 
-import miscellaneous.Vector;
+import misc.Vector;
 
 public class TriangleLight extends Triangle{
     public Vector direction;
