@@ -1,8 +1,9 @@
 package World;
 
-import miscellaneous.IntersectionData;
-import miscellaneous.Ray;
-import miscellaneous.Vector;
+import misc.BoundingBox;
+import misc.IntersectionData;
+import misc.Ray;
+import misc.Vector;
 
 
 /**
@@ -14,6 +15,12 @@ public class Triangle extends WorldObject {
     Vector vertex3;
     Vector normal;
 
+    // Stores bounding box which is a set of 8 vectors
+    // Vector of bottom 4 corners first and vectors of
+    // top 4 corners later.
+    BoundingBox boundingBox;
+
+
     public Triangle(){};
 
     public Triangle(Vector vertex1, Vector vertex2, Vector vertex3) {
@@ -23,6 +30,8 @@ public class Triangle extends WorldObject {
 
         normal = vertex2.subtract(vertex1).cross(vertex3.subtract(vertex1));
         normal.normalize();
+
+        this.setBoundingBox();
     }
 
     @Override
@@ -77,6 +86,77 @@ public class Triangle extends WorldObject {
         }
 
         return new IntersectionData();
+    }
+
+    private double min(double arr[]) {
+        double m = arr[0];
+
+        for ( int idx = 1; idx < arr.length; idx++ ) {
+            if ( arr[idx] < m ) {
+                m = arr[idx];
+            }
+        }
+
+        return m;
+
+    }
+
+    private double max(double arr[]) {
+        double m = arr[0];
+
+        for ( int idx = 1; idx < arr.length; idx++ ) {
+            if ( arr[idx] > m ) {
+                m = arr[idx];
+            }
+        }
+
+        return m;
+
+    }
+
+    @Override
+    /**
+     * Sets Axially aligned bounding box of the triangle
+     * object for KD tree.
+     */
+    public void setBoundingBox() {
+
+        double x[] = {vertex1.x, vertex2.x, vertex3.x};
+        double y[] = {vertex1.y, vertex2.y, vertex3.y};
+        double z[] = {vertex1.z, vertex2.z, vertex3.z};
+        
+        double minX = min(x);
+        double minY = min(y);
+        double minZ = min(z);
+
+        double maxX = max(x);
+        double maxY = max(y);
+        double maxZ = max(z);
+
+        boundingBox = new BoundingBox(minX, maxX, minY, maxY, minZ, maxZ);
+
+
+    }
+
+    @Override
+    /**
+     *  Returns bounding box of this triangle
+     *
+     * @return bounding box as an array of Vector of length 8
+     */
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
+    }
+
+
+    @Override
+    /**
+     * Returns first corner stores in bounding box.
+     *
+     * @return  Vector object of first corner of bounding box.
+     */
+    public Vector getFirstCorner() {
+        return boundingBox.getFirstCorner();
     }
 
     @Override

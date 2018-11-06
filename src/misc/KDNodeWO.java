@@ -4,13 +4,13 @@ import World.WorldObject;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class KDNode {
+public class KDNodeWO {
 
     //Stores the current node's bounding box
     BoundingBox boundingBox;
 
     //left and right children
-    KDNode left, right;
+    KDNodeWO left, right;
 
     //world objects within this KD node.
     WorldObject objects[];
@@ -24,7 +24,7 @@ public class KDNode {
      * for root KD node.
      * @param objects all world objects in the scene.
      */
-    public KDNode(WorldObject objects[]) {
+    public KDNodeWO(WorldObject objects[]) {
 
         this.objects = new WorldObject[objects.length];
 
@@ -45,7 +45,7 @@ public class KDNode {
      * @param boundingBox Bounding box object that bounds this node. primitives sorted
      *                    based on this box.
      */
-    private KDNode(BoundingBox boundingBox) {
+    private KDNodeWO(BoundingBox boundingBox) {
 
         this.boundingBox = boundingBox;
 
@@ -93,7 +93,7 @@ public class KDNode {
 
     /**
      *
-     * Checks if the primitive is inside the KDNode based on its bounding box
+     * Checks if the primitive is inside the KDNodeWO based on its bounding box
      * @param primitive primitive which is to be checked.
      * @return
      */
@@ -142,7 +142,7 @@ public class KDNode {
      * Uses a helper function for abstraction.
      * @param root of the KD tree
      */
-    public static void buildTree(KDNode root) {
+    public static void buildTree(KDNodeWO root) {
         root.__buildTree(0);
     }
 
@@ -171,9 +171,9 @@ public class KDNode {
 
         BoundingBox child[] = splitNode(split_axis, split_val);
 
-        left = new KDNode(child[0]);
+        left = new KDNodeWO(child[0]);
 
-        right = new KDNode((child[1]));
+        right = new KDNodeWO((child[1]));
 
         ArrayList<WorldObject> leftPrimitives = new ArrayList<>(), rightPrimitives = new ArrayList<>();
 

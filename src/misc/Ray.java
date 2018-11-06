@@ -1,4 +1,4 @@
-package miscellaneous;
+package misc;
 
 public class Ray {
     public Vector origin = new Vector();

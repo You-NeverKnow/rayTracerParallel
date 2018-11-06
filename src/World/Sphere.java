@@ -1,13 +1,16 @@
 package World;
 
-import miscellaneous.IntersectionData;
-import miscellaneous.Ray;
-import miscellaneous.Vector;
+import misc.BoundingBox;
+import misc.IntersectionData;
+import misc.Ray;
+import misc.Vector;
 
 public class Sphere extends WorldObject {
 
     public double radius;
     public Vector center;
+
+    BoundingBox boundingBox;
 
     public Sphere(double radius, Vector center) {
         this.radius = radius;
@@ -65,4 +68,43 @@ public class Sphere extends WorldObject {
 //        System.out.println("Sphere /? " + distance);
         return new IntersectionData();
     }
+
+    @Override
+    /**
+     * Sets Axially aligned bounding box of the sphere
+     * object for KD tree.
+     */
+    public void setBoundingBox() {
+
+        double minX = center.x - radius;
+        double minY = center.y - radius;
+        double minZ = center.z - radius;
+
+        double maxX = center.x + radius;
+        double maxY = center.y + radius;
+        double maxZ = center.z + radius;
+
+        boundingBox = new BoundingBox(minX, maxX, minY, maxY, minZ, maxZ);
+    }
+
+    @Override
+    /**
+     *  Returns bounding box of this triangle
+     *
+     * @return bounding box as an array of Vector of length 8
+     */
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
+    }
+
+    @Override
+    /**
+     * Returns first corner stores in bounding box.
+     *
+     * @return  Vector object of first corner of bounding box.
+     */
+    public Vector getFirstCorner() {
+        return boundingBox.getFirstCorner();
+    }
+
 }
