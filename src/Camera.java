@@ -1,13 +1,14 @@
-import World.World;
-import World.WorldObject;
 import edu.rit.image.Color;
 import edu.rit.image.ColorArray;
 import edu.rit.image.ColorImageQueue;
 import edu.rit.image.ColorPngWriter;
 import edu.rit.util.Random;
+import World.World;
+import World.WorldObject;
 import misc.IntersectionData;
 import misc.Ray;
 import misc.Vector;
+import misc.KDTreeWO;
 
 import java.io.*;
 
@@ -73,6 +74,8 @@ public class Camera {
         Ray ray = new Ray();
         Vector pixelPosition = new Vector(0, 0, projectionZ);
         Random sampler = new Random(42);
+
+        KDTreeWO objects = new KDTreeWO(world.worldObjects);
 
         // Iterate over all pixels, and compute radiance
         // TODO: Multisampling / width height given in world coordinates
@@ -185,6 +188,13 @@ public class Camera {
             }
         }
         return hitData;
+    }
+
+    private IntersectionData KDHitData(Ray ray, KDTreeWO objects) {
+        double distance = Double.MAX_VALUE;
+        IntersectionData hitData = new IntersectionData();
+
+
     }
 
 
