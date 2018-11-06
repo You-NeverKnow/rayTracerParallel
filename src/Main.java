@@ -2,7 +2,7 @@ import World.World;
 import World.Sphere;
 import World.Triangle;
 import World.WorldObject;
-import miscellaneous.Vector;
+import misc.Vector;
 import java.io.IOException;
 
 /**

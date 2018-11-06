@@ -5,9 +5,9 @@ import edu.rit.image.ColorArray;
 import edu.rit.image.ColorImageQueue;
 import edu.rit.image.ColorPngWriter;
 import edu.rit.util.Random;
-import miscellaneous.IntersectionData;
-import miscellaneous.Ray;
-import miscellaneous.Vector;
+import misc.IntersectionData;
+import misc.Ray;
+import misc.Vector;
 
 import java.io.*;
 
