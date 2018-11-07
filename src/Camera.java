@@ -107,18 +107,22 @@ public class Camera {
         // TODO: ADD shadow ray and shading here
 
         if (hitData.hit) {
+            // Point is inside light source
             if (hitData.hitObject == world.triangleLights[0] ||
                     hitData.hitObject == world.triangleLights[1]) {
                 return hitData.color;
             }
-            return getIllumination(hitData, world, sampler);
+            // Point is outside light source, somewhere in scene
+            adjustColorWRTLightSource(hitData, world, sampler);
+//            return hitData.color;
+            return hitData.hitObject.phong.computeRadiance(hitData, world);
         }
         else {
             return new Color().rgb(0);
         }
     }
 
-    private Color getIllumination(IntersectionData hitData, World world, Random sampler) {
+    private void adjustColorWRTLightSource(IntersectionData hitData, World world, Random sampler) {
 
         Vector lightSamplePoint = new Vector();
         Ray shadowRay = new Ray();
@@ -128,7 +132,9 @@ public class Camera {
         Vector shadowRayDirection;
         double x, z;
         int lightHitCounter = 0;
-        int nSamples = 10;
+        int nSamples = 1;
+        hitData.lights = new Vector[nSamples];
+
         for (int i = 0; i < nSamples; i++) {
 
             x = sampler.nextDouble();
@@ -150,6 +156,10 @@ public class Camera {
             ) {
                 lightHitCounter += 1;
 
+                // record when light hits. rest of array remains null
+                hitData.lights[i] = new Vector();
+                hitData.lights[i].set(lightSamplePoint);
+
             }
 
         }
@@ -164,7 +174,6 @@ public class Camera {
         b /= nSamples;
 
         hitData.color.rgb(r/256f, g/256f, b/256f);
-        return hitData.color;
     }
 
     /*

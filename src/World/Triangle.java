@@ -63,17 +63,14 @@ public class Triangle extends WorldObject {
             return new IntersectionData();
         }
 
-
-        // Hit
-//        distance = Math.abs(distance);
-
         if (distance >= 0) {
             Vector intersectionPoint = ray.origin.add(
                                             ray.direction.multiply(distance));
+//            System.out.println("Ray dir = " + ray.direction);
 
             return new IntersectionData(distance, intersectionPoint,
+                                        ray.direction,
                                         this.normal, this.color, this);
-
         }
 
         return new IntersectionData();

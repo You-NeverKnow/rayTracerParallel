@@ -59,6 +59,7 @@ public class Sphere extends WorldObject {
             Vector normal = intersectionPoint.subtract(this.center);
             normal.normalize();
             return new IntersectionData(distance, intersectionPoint,
+                                        ray.direction,
                                         normal, this.color, this);
         }
 
