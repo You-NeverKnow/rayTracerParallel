@@ -11,6 +11,7 @@ import miscellaneous.Ray;
 public abstract class WorldObject {
     public Color color = new Color().rgb(0);
     public Phong phong = new Phong();
+    public double refractiveIndex;
 
     public abstract void transform(double[][] transformMatrix);
     public void setPhongModel(Phong phong) {

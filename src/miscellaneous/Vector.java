@@ -1,5 +1,7 @@
 package miscellaneous;
 
+import edu.rit.image.Color;
+
 public class Vector {
 	public double x;
 	public double y;
@@ -15,6 +17,26 @@ public class Vector {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+	}
+
+	public static Vector _getRefractedRay(Vector s, Vector normal,
+										  double relativeRefractionIndex) {
+		if (normal.dot(s) < 0) {
+			normal = normal.multiply(-1);
+		}
+
+		double sDotNSquared = Math.pow(s.dot(normal), 2);
+		double rriSquared = Math.pow(relativeRefractionIndex, 2);
+
+		double discriminant = 1 - (rriSquared * (1 - sDotNSquared));
+
+		if (discriminant < 0) {
+			return null;
+		}
+
+		Vector a = s.subtract(normal.multiply(s.dot(normal)));
+		Vector b = normal.multiply(Math.sqrt(discriminant));
+		return a.multiply(relativeRefractionIndex).add(b);
 	}
 
 	public void set(double x, double y, double z) {
@@ -111,6 +133,19 @@ public class Vector {
         }
 
         this.set(result);
+    }
+
+	public static Vector _getReflectedRay(Vector s, Vector n) {
+        return s.subtract(n.multiply(2 * s.dot(n)));
+    }
+
+	public static Color _convertVectorColor(Vector v, Vector m) {
+
+        Color rgb = new Color().rgb((float) (v.x / m.x),
+                (float) (v.y / m.y),
+                (float) (v.z / m.z));
+
+        return rgb;
     }
 
 

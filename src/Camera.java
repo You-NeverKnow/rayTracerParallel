@@ -74,6 +74,9 @@ public class Camera {
         Vector pixelPosition = new Vector(0, 0, projectionZ);
         Random sampler = new Random(42);
 
+        // Max color
+        Vector maxColor = new Vector(1, 1, 1).multiply(50);
+
         // Iterate over all pixels, and compute radiance
         // TODO: Multisampling / width height given in world coordinates
         for (int row = 0; row < height; row++) {
@@ -91,7 +94,9 @@ public class Camera {
                 ray.direction.set(pixelPosition);
 
                 // Get color for pixel
-                pixelRow.color(col, getRadiance(ray, world, sampler));
+                pixelRow.color(col,
+                        Vector._convertVectorColor( getRadiance(ray, world,
+                                            sampler, 3), maxColor));
             }
             imageQueue.put(imageQueue.rows() - 1 - row, pixelRow);
         }
@@ -102,7 +107,7 @@ public class Camera {
     /*
     Returns color of the object that the ray hits
     */
-    private Color getRadiance(Ray ray, World world, Random sampler) {
+    private Vector getRadiance(Ray ray, World world, Random sampler, int depth) {
         IntersectionData hitData = getHitData(ray, world);
         // TODO: ADD shadow ray and shading here
 
@@ -110,16 +115,76 @@ public class Camera {
             // Point is inside light source
             if (hitData.hitObject == world.triangleLights[0] ||
                     hitData.hitObject == world.triangleLights[1]) {
-                return hitData.color;
+                return new Vector(1f, 1f, 1f).multiply(50);
             }
             // Point is outside light source, somewhere in scene
             adjustColorWRTLightSource(hitData, world, sampler);
-//            return hitData.color;
-            return hitData.hitObject.phong.computeRadiance(hitData, world);
+
+            Vector localIllumination =
+                                hitData.hitObject.phong.computeRadiance(hitData);
+
+            if (depth > 0 )
+                localIllumination.selfAdd((rayTraceRecursive(hitData,
+                                                    world, sampler, depth)));
+            return localIllumination;
         }
         else {
-            return new Color().rgb(0);
+
+            return new Vector();
         }
+    }
+
+    private Vector rayTraceRecursive(IntersectionData hitData,
+                                     World world, Random sampler, int depth) {
+        Vector illumination = new Vector();
+        double kr = hitData.hitObject.phong.kr;
+        double kt = hitData.hitObject.phong.kt;
+        Vector s = hitData.intersectionDirection.multiply(1);
+
+
+        // Add reflective radiance
+        if (kr > 0) {
+            Vector r = Vector._getReflectedRay(s, hitData.normal);
+            r.normalize();
+            Ray reflectedRay = new Ray(hitData.intersectionPoint, r);
+
+            // Multiply with -1?
+            illumination.selfAdd(getRadiance(reflectedRay, world, sampler,
+                                                depth-1).multiply(kr));
+        }
+        // Add transmitive radiance
+        if (kt > 0) {
+            // assuming light transport medium is air
+            double relativeRefractionIndex = hitData.hitObject.refractiveIndex;
+            Vector refractedRayDirection = Vector._getRefractedRay(
+                                s, hitData.normal,
+                            1/relativeRefractionIndex);
+
+            // Total internal reflection
+            if (refractedRayDirection == null) {
+                Vector r = Vector._getReflectedRay(s, hitData.normal);
+                r.normalize();
+                Ray reflectedRay = new Ray(hitData.intersectionPoint, r);
+                illumination.selfAdd(getRadiance(reflectedRay, world, sampler,
+                                                depth-1).multiply(kt));
+
+            } else {
+                Ray refractedRay = new Ray(hitData.intersectionPoint.add(hitData.normal.multiply(-1e-9)), refractedRayDirection);
+                IntersectionData internalHitData = hitData.hitObject.intersect(refractedRay);
+
+                refractedRayDirection = Vector._getRefractedRay(
+                            refractedRayDirection, internalHitData.normal.multiply(-1),
+                            relativeRefractionIndex);
+
+                refractedRay.origin.set(internalHitData.intersectionPoint);
+                refractedRay.direction.set(refractedRayDirection);
+                illumination.selfAdd(getRadiance(refractedRay, world, sampler,
+                                                depth-1).multiply(kt));
+
+            }
+        }
+        return illumination;
+
     }
 
     private void adjustColorWRTLightSource(IntersectionData hitData, World world, Random sampler) {
@@ -132,7 +197,7 @@ public class Camera {
         Vector shadowRayDirection;
         double x, z;
         int lightHitCounter = 0;
-        int nSamples = 1;
+        int nSamples = 50;
         hitData.lights = new Vector[nSamples];
 
         for (int i = 0; i < nSamples; i++) {
@@ -148,7 +213,8 @@ public class Camera {
             shadowRayDirection.normalize();
             shadowRay.direction.set(shadowRayDirection);
 
-            IntersectionData shadowRayHitData = this.getHitData(shadowRay, world);
+            IntersectionData shadowRayHitData = this.getHitData(
+                                                            shadowRay, world);
 
             if (shadowRayHitData.hit &&
                     (shadowRayHitData.hitObject == world.triangleLights[0] ||
@@ -161,7 +227,6 @@ public class Camera {
                 hitData.lights[i].set(lightSamplePoint);
 
             }
-
         }
 
         float r = lightHitCounter * hitData.color.red();
@@ -182,6 +247,7 @@ public class Camera {
     private IntersectionData getHitData(Ray ray, World world) {
         double distance = Double.MAX_VALUE;
         IntersectionData hitData = new IntersectionData();
+
         // Check intersection with all objects
         // TODO: Add kd-tree here
         for (WorldObject worldObject: world.worldObjects) {

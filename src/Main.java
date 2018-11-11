@@ -17,7 +17,10 @@ public class Main {
         int x1, x2, y1, y2, z1, z2;
         Vector vertex0, vertex1, vertex2, vertex3, ka, kd, ks;
         Phong phong = new Phong();
-        double ke, maxDepth, kr, kt;
+        double ke;
+        int maxDepth;
+        double kr;
+        double kt;
 
         x1 = 75 - 540;
         x2 = 75 + 540;
@@ -29,9 +32,9 @@ public class Main {
 
         // Floor
         ka = new Vector(1, 1, 1);
-        kd = new Vector(0.4, 0.1, 0.1);
-        ks = new Vector(0.1, 0.1, 0.1);
-        ke = 0.2;
+        kd = new Vector(0.6, 0.1, 0.1);
+        ks = new Vector(0.3, 0.1, 0.1);
+        ke = 1;
 
         kr = 0;
         kt = 0;
@@ -126,11 +129,11 @@ public class Main {
         double radius;
 
         ka = new Vector(1, 1, 1);
-        kd = new Vector(0.1, 0.1, 0.4);
-        ks = new Vector(0.1, 0.1, 0.1);
-        ke = 0.2;
+        kd = new Vector(0.3, 0.3, 0.3);
+        ks = new Vector(0.3, 0.3, 0.3);
+        ke = 1;
 
-        kr = 0;
+        kr = 1;
         kt = 0;
         maxDepth = 1;
         phong.set(ka, kd, ks, ke, kr, kt, maxDepth);
@@ -144,26 +147,27 @@ public class Main {
 
         // Sphere 2
         ka = new Vector(1, 1, 1);
-        kd = new Vector(0.1, 0.1, 0.4);
-        ks = new Vector(0.1, 0.1, 0.4);
-        ke = 0.2;
+        kd = new Vector(0.3, 0.3, 0.3);
+        ks = new Vector(0.3, 0.3, 0.3);
+        ke = 1;
         kr = 0;
-        kt = 0;
+        kt = 0.8;
         maxDepth = 1;
         phong.set(ka, kd, ks, ke, kr, kt, maxDepth);
 
         radius = 120;
         center = new Vector(x2 - radius - 100, y1 + radius, z1 - radius - 100);
         Sphere sphere2 = new Sphere(radius, center);
-        sphere2.color.rgb(0.0f, 0f, 1f);
+        sphere2.color.rgb(0.1f, 0.1f, 0.1f);
         sphere2.phong.set(phong);
+        sphere2.refractiveIndex = 1;
         world.worldObjects[11] = sphere2;
 
         // Add lights
-        vertex0 = new Vector(75 - 150, y2 - 1e-12, -850);
-        vertex1 = new Vector(75 - 150, y2 - 1e-12, -1100);
-        vertex2 = new Vector(75 + 150, y2 - 1e-12, -850);
-        vertex3 = new Vector(75 + 150, y2 - 1e-12, -1100);
+        vertex0 = new Vector(75 - 150, y2 - 1e-10, -850);
+        vertex1 = new Vector(75 - 150, y2 - 1e-10, -1100);
+        vertex2 = new Vector(75 + 150, y2 - 1e-10, -850);
+        vertex3 = new Vector(75 + 150, y2 - 1e-10, -1100);
 
 	    Triangle light1 = new Triangle(vertex1, vertex0, vertex2);
 	    Triangle light2 = new Triangle(vertex1, vertex2, vertex3);
