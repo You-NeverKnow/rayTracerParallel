@@ -9,6 +9,8 @@ public class Photon {
         this.position = position;
     }
 
-
+    public String toString() {
+        return position.toString();
+    }
 
 }

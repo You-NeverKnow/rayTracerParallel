@@ -28,7 +28,7 @@ public class RayTraceSeq extends Task{
 	ColorArray pixelRow;
 	File filename;
 
-	public void setCameraSeq(Vector eyePoint, Vector lookAt, Vector up, int focalLength) {
+	public void setCamera(Vector eyePoint, Vector lookAt, Vector up, int focalLength) {
 		this.eyePoint = eyePoint;
 		this.lookAt = lookAt;
 		this.up = up;

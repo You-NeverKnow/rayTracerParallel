@@ -1,11 +1,19 @@
 package misc;
 
+import World.WorldObject;
+
 public class KDTreePt {
 
-    public KDTreePt(Photon photons[]) {
+    KDNodePt root;
 
-
-
+    public KDTreePt(Vector photons[]) {
+        root = KDNodePt.buildTree(photons);
     }
+
+    public Vector[] findClosest(int num_near, Vector pt) {
+        return root.findClosest(num_near, pt);
+    }
+
+
 
 }
