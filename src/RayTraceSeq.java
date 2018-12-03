@@ -4,15 +4,13 @@ import edu.rit.image.ColorArray;
 import edu.rit.image.ColorImageQueue;
 import edu.rit.image.ColorPngWriter;
 import edu.rit.util.Random;
-import World.World;
-import World.WorldObject;
-import World.World;
-import World.Sphere;
-import World.Triangle;
+import world.World;
+import world.WorldObject;
+import world.Sphere;
+import world.Triangle;
 import misc.IntersectionData;
 import misc.Ray;
 import misc.Vector;
-import misc.KDTreeWO;
 
 import java.io.*;
 

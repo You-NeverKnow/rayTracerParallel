@@ -1,7 +1,7 @@
-import World.World;
-import World.Sphere;
-import World.Triangle;
-import World.WorldObject;
+import world.World;
+import world.Sphere;
+import world.Triangle;
+import world.WorldObject;
 import misc.Vector;
 import java.io.IOException;
 
@@ -135,6 +135,7 @@ public class Main{
 	    world.triangleLights[1] = light2;
 
     }
+
 
     public static void main(String[] args)
             throws IOException, InterruptedException {

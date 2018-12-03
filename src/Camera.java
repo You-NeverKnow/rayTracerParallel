@@ -3,8 +3,8 @@ import edu.rit.image.ColorArray;
 import edu.rit.image.ColorImageQueue;
 import edu.rit.image.ColorPngWriter;
 import edu.rit.util.Random;
-import World.World;
-import World.WorldObject;
+import world.World;
+import world.WorldObject;
 import misc.IntersectionData;
 import misc.Ray;
 import misc.Vector;
@@ -190,12 +190,12 @@ public class Camera {
         return hitData;
     }
 
-    private IntersectionData KDHitData(Ray ray, KDTreeWO objects) {
-        double distance = Double.MAX_VALUE;
-        IntersectionData hitData = new IntersectionData();
-
-
-    }
+//    private IntersectionData KDHitData(Ray ray, KDTreeWO objects) {
+//        double distance = Double.MAX_VALUE;
+//        IntersectionData hitData = new IntersectionData();
+//
+//
+//    }
 
 
 }

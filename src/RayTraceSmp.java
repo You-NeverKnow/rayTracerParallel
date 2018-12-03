@@ -6,17 +6,16 @@ import edu.rit.image.ColorArray;
 import edu.rit.image.ColorImageQueue;
 import edu.rit.image.ColorPngWriter;
 import edu.rit.util.Random;
-import World.World;
-import World.WorldObject;
-import World.World;
-import World.Sphere;
-import World.Triangle;
+import world.World;
+import world.WorldObject;
+import world.Sphere;
+import world.Triangle;
 import misc.IntersectionData;
 import misc.Ray;
 import misc.Vector;
-import misc.KDTreeWO;
 
 import java.io.*;
+import java.util.ArrayList;
 
 public class RayTraceSmp extends Task{
 	Vector eyePoint;
@@ -348,10 +347,73 @@ public class RayTraceSmp extends Task{
 
 	}
 
+
+	public static void loadScene(String filename,World world) {
+
+		File f = new File(filename);
+		String line;
+		String elems[];
+		ArrayList<WorldObject> worldObjects = new ArrayList<>(4000);
+		ArrayList<Vector> positions = new ArrayList<>(4000);
+		double x, y, z;
+		int idx1, idx2, idx3;
+		Triangle t;
+		Vector v1, v2, v3;
+		Color color = new Color().rgb(0,250,250);
+		try {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+
+			line = reader.readLine();
+
+			elems = line.trim().split(" ");
+
+			if (elems[0].equals("v")) {
+
+				// v x y z
+				x = Double.parseDouble(elems[1]);
+				y = Double.parseDouble(elems[2]);
+				z = Double.parseDouble(elems[3]);
+				positions.add(new Vector(x, y, z));
+			} else if (elems[0].equals("f")) {
+
+				//f v/vt/vn v/vt/vn v/vt/vn
+				//ignore vt and vn
+				idx1 = Integer.parseInt(elems[1].split("/")[0]);
+				idx2 = Integer.parseInt(elems[2].split("/")[0]);
+				idx3 = Integer.parseInt(elems[3].split("/")[0]);
+
+				worldObjects.add(new Triangle(positions.get(idx1), positions.get(idx2), positions.get(idx3), color));
+
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// Add lights
+		v1 = new Vector(75 - 150, 60+540 - 1e-12, -1100);
+		v2 = new Vector(75 + 150, 60+540 - 1e-12, -850);
+		v3 = new Vector(75 + 150, 60+540 - 1e-12, -1100);
+
+		Triangle light = new Triangle(v1, v2, v3);
+		light.color.rgb(1f, 1f, 1f);
+
+		worldObjects.add(light);
+
+		// Light objects add
+		world.triangleLights = new WorldObject[1];
+
+		world.triangleLights[0] = light;
+		world.worldObjects = new WorldObject[worldObjects.size()];
+		world.worldObjects = worldObjects.toArray(world.worldObjects);
+
+	}
+
 	public void main(String[] args) throws Exception {
 
 		World world = new World();
-		create_scene(world);
+		loadScene("Scene/Mig-31 Foxhound.obj",world);
 
 		eyePoint = new Vector(75, 60, 540);
 		lookAt = new Vector(75, 60, 530);
