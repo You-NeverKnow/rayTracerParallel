@@ -21,9 +21,6 @@ public class Vector {
 
 	public static Vector _getRefractedRay(Vector s, Vector normal,
 										  double relativeRefractionIndex) {
-		if (normal.dot(s) < 0) {
-			normal = normal.multiply(-1);
-		}
 
 		double sDotNSquared = Math.pow(s.dot(normal), 2);
 		double rriSquared = Math.pow(relativeRefractionIndex, 2);

@@ -139,7 +139,7 @@ public class Camera {
         Vector illumination = new Vector();
         double kr = hitData.hitObject.phong.kr;
         double kt = hitData.hitObject.phong.kt;
-        Vector s = hitData.intersectionDirection.multiply(1);
+                Vector s = hitData.intersectionDirection.multiply(1);
 
 
         // Add reflective radiance
