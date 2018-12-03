@@ -1,4 +1,4 @@
-package World;
+package world;
 
 import misc.Vector;
 

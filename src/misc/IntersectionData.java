@@ -1,6 +1,6 @@
 package misc;
 
-import World.WorldObject;
+import world.WorldObject;
 import edu.rit.image.Color;
 
 public class IntersectionData {

@@ -1,9 +1,5 @@
 package misc;
 
-import World.WorldObject;
-
-import java.util.ArrayList;
-
 public class KDNodePt {
 
 	Vector split_photon;

@@ -1,9 +1,10 @@
-package World;
+package world;
 
 import misc.BoundingBox;
 import misc.IntersectionData;
 import misc.Ray;
 import misc.Vector;
+import edu.rit.image.Color;
 
 
 /**
@@ -32,6 +33,15 @@ public class Triangle extends WorldObject {
         normal.normalize();
 
         this.setBoundingBox();
+    }
+
+    public Triangle(Vector vertex1, Vector vertex2, Vector vertex3, Color color) {
+        this.vertex1 = new Vector(vertex1.x, vertex1.y, vertex1.z);
+        this.vertex2 = new Vector(vertex2.x, vertex2.y, vertex2.z);
+        this.vertex3 = new Vector(vertex3.x, vertex3.y, vertex3.z);
+        this.color = new Color(color);
+        normal = vertex2.subtract(vertex1).cross(vertex3.subtract(vertex1));
+        normal.normalize();
     }
 
     @Override

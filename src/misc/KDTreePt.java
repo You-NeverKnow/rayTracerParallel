@@ -1,7 +1,5 @@
 package misc;
 
-import World.WorldObject;
-
 public class KDTreePt {
 
     KDNodePt root;

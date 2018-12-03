@@ -1,11 +1,11 @@
-package World;
+package world;
 
 import edu.rit.image.Color;
 import misc.IntersectionData;
 import misc.Ray;
 
 /**
- * World
+ * world
  */
 public abstract class WorldObject {
     public Color color = new Color().rgb(0);

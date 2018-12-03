@@ -1,6 +1,6 @@
 package misc;
 
-import World.WorldObject;
+import world.WorldObject;
 import java.util.ArrayList;
 import java.util.Random;
 

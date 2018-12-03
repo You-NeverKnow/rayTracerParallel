@@ -1,6 +1,6 @@
 package misc;
 
-import World.WorldObject;
+import world.WorldObject;
 
 /**
  *  KD tree class meant to store only world object as primitives.
