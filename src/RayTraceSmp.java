@@ -361,26 +361,29 @@ public class RayTraceSmp extends Task{
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
 
-			line = reader.readLine();
+			while ( (line = reader.readLine()) != null) {
+				System.out.println("iter");
+				System.out.flush();
+				elems = line.trim().split(" ");
 
-			elems = line.trim().split(" ");
+				if (elems[0].equals("v")) {
 
-			if (elems[0].equals("v")) {
+					// v x y z
+					x = Double.parseDouble(elems[1]);
+					y = Double.parseDouble(elems[2]);
+					z = 850 + Double.parseDouble(elems[3]);
+					positions.add(new Vector(x, y, z));
+				} else if (elems[0].equals("f")) {
 
-				// v x y z
-				x = Double.parseDouble(elems[1]);
-				y = Double.parseDouble(elems[2]);
-				z = Double.parseDouble(elems[3]);
-				positions.add(new Vector(x, y, z));
-			} else if (elems[0].equals("f")) {
+					//f v/vt/vn v/vt/vn v/vt/vn
+					//ignore vt and vn
+					idx1 = Integer.parseInt(elems[1].split("/")[0])-1;
+					idx2 = Integer.parseInt(elems[2].split("/")[0])-1;
+					idx3 = Integer.parseInt(elems[3].split("/")[0])-1;
 
-				//f v/vt/vn v/vt/vn v/vt/vn
-				//ignore vt and vn
-				idx1 = Integer.parseInt(elems[1].split("/")[0]);
-				idx2 = Integer.parseInt(elems[2].split("/")[0]);
-				idx3 = Integer.parseInt(elems[3].split("/")[0]);
+					worldObjects.add(new Triangle(positions.get(idx1), positions.get(idx2), positions.get(idx3), color));
 
-				worldObjects.add(new Triangle(positions.get(idx1), positions.get(idx2), positions.get(idx3), color));
+				}
 
 			}
 		} catch (FileNotFoundException e) {
@@ -411,8 +414,13 @@ public class RayTraceSmp extends Task{
 	public void main(String[] args) throws Exception {
 
 		World world = new World();
-		loadScene("Scene/Mig-31 Foxhound.obj",world);
-
+		System.out.println("Hello");
+		System.out.flush();
+		//loadScene("scene/Mig-31 Foxhound.obj",world);
+		loadScene("scene/sample.obj", world);
+		//create_scene(world);
+		System.out.println("Loaded scene");
+		System.out.flush();
 		eyePoint = new Vector(75, 60, 540);
 		lookAt = new Vector(75, 60, 530);
 		up = new Vector(0, 1, 0);
