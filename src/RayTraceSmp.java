@@ -83,14 +83,20 @@ public class RayTraceSmp extends Task{
 			new Section() {
 				public void run() {
 					parallelFor (0, height-1). schedule(guided).exec (new Loop() {
+						final int wd = width;
+						final int ht = height;
+						final int z = projectionZ;
+						final World wl = world;
+						final Vector or = imageOrigin;
+						final Random s = sampler; 
 						ColorArray pixelRow;
 						Ray ray;
 						Vector pixelPosition;
 
 						public void start() {
-							pixelRow = new ColorArray (width);
+							pixelRow = new ColorArray (wd);
 							ray = new Ray();
-							pixelPosition = new Vector(0, 0, projectionZ);
+							pixelPosition = new Vector(0, 0, z);
 						}
 						public void run (int row) throws Exception {
 							
@@ -99,12 +105,12 @@ public class RayTraceSmp extends Task{
 							// 	return;
 							// }
 							// retrieve original odd number from n of 2n + 1 form
-							for (int col = 0; col < width; col++) {
+							for (int col = 0; col < wd; col++) {
 
 							// Get current pixel position
-								pixelPosition.x = imageOrigin.x + col;
-								pixelPosition.y = imageOrigin.y + row;
-								pixelPosition.z = projectionZ;
+								pixelPosition.x = or.x + col;
+								pixelPosition.y = or.y + row;
+								pixelPosition.z = z;
 
 								ray.origin.set(pixelPosition);
 								pixelPosition.normalize();
@@ -113,7 +119,7 @@ public class RayTraceSmp extends Task{
 								ray.direction.set(pixelPosition);
 
 								// Get color for pixel
-								pixelRow.color(col, getRadiance(ray, world, sampler));
+								pixelRow.color(col, getRadiance(ray, wl, s));
 							}
 							imageQueue.put(imageQueue.rows() - 1 - row, pixelRow);
 						}//run method ends
