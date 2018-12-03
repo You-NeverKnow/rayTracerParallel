@@ -19,6 +19,7 @@ public class RayTraceSmp extends Task{
 	Vector lookAt;
 	Vector up;
 	int focalLength;
+	double projectionZ;
 
 	// For writing PNG image file.
 	ColorPngWriter writer;
@@ -40,7 +41,7 @@ public class RayTraceSmp extends Task{
 
 		// Normalize vectors
 		n.normalize();
-		double projectionZ = n.multiply(-focalLength).z;
+		projectionZ = n.multiply(-focalLength).z;
 		System.out.println("ProjectionZ: "+ projectionZ);
 		up.normalize();
 
