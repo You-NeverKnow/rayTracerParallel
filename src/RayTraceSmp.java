@@ -34,7 +34,7 @@ public class RayTraceSmp extends Task{
 		this.filename = new File("../output/renderedImage.png");
 	}
 
-	public void render(World world, int width, int height)
+	public void render(final World world,final int width,final int height)
 			throws Exception {
 
 		Vector n = eyePoint.subtract(lookAt);
@@ -70,10 +70,10 @@ public class RayTraceSmp extends Task{
 		
 
 		// Init projection plane
-		Vector imageOrigin = new Vector(-width/2, -height/2,
+		final Vector imageOrigin = new Vector(-width/2, -height/2,
 				projectionZ);
 
-		Random sampler = new Random(42);
+		final Random sampler = new Random(42);
 
 		//KDTreeWO objects = new KDTreeWO(world.worldObjects);
 
@@ -83,20 +83,14 @@ public class RayTraceSmp extends Task{
 			new Section() {
 				public void run() {
 					parallelFor (0, height-1). schedule(guided).exec (new Loop() {
-						final int wd = width;
-						final int ht = height;
-						final int z = projectionZ;
-						final World wl = world;
-						final Vector or = imageOrigin;
-						final Random s = sampler; 
 						ColorArray pixelRow;
 						Ray ray;
 						Vector pixelPosition;
 
 						public void start() {
-							pixelRow = new ColorArray (wd);
+							pixelRow = new ColorArray (width);
 							ray = new Ray();
-							pixelPosition = new Vector(0, 0, z);
+							pixelPosition = new Vector(0, 0, projectionZ);
 						}
 						public void run (int row) throws Exception {
 							
@@ -105,12 +99,12 @@ public class RayTraceSmp extends Task{
 							// 	return;
 							// }
 							// retrieve original odd number from n of 2n + 1 form
-							for (int col = 0; col < wd; col++) {
+							for (int col = 0; col < width; col++) {
 
 							// Get current pixel position
-								pixelPosition.x = or.x + col;
-								pixelPosition.y = or.y + row;
-								pixelPosition.z = z;
+								pixelPosition.x = imageOrigin.x + col;
+								pixelPosition.y = imageOrigin.y + row;
+								pixelPosition.z = projectionZ;
 
 								ray.origin.set(pixelPosition);
 								pixelPosition.normalize();
@@ -119,7 +113,7 @@ public class RayTraceSmp extends Task{
 								ray.direction.set(pixelPosition);
 
 								// Get color for pixel
-								pixelRow.color(col, getRadiance(ray, wl, s));
+								pixelRow.color(col, getRadiance(ray, world, sampler));
 							}
 							imageQueue.put(imageQueue.rows() - 1 - row, pixelRow);
 						}//run method ends
