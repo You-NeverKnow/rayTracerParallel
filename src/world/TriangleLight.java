@@ -23,15 +23,15 @@ public class TriangleLight extends Triangle {
         this.direction.transform(transformMatrix);
     }
 
-//    @Override
-//    public void writeOut(OutStream out) throws IOException {
-//        super.writeOut(out);
-//        out.writeObject(direction);
-//    }
-//
-//    @Override
-//    public void readIn(InStream in) throws IOException {
-//        super.readIn(in);
-//        direction = (Vector)in.readObject();
-//    }
+    @Override
+    public void writeOut(OutStream out) throws IOException {
+        super.writeOut(out);
+        out.writeObject(direction);
+    }
+
+    @Override
+    public void readIn(InStream in) throws IOException {
+        super.readIn(in);
+        direction = (Vector)in.readObject();
+    }
 }

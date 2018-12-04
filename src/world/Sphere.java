@@ -114,15 +114,15 @@ public class Sphere extends WorldObject {
         return boundingBox.getFirstCorner();
     }
 
-//    @Override
-//    public void writeOut(OutStream out) throws IOException {
-//        out.writeObject(center);
-//        out.writeDouble(radius);
-//    }
-//
-//    @Override
-//    public void readIn(InStream in) throws IOException {
-//        center = (Vector)in.readObject();
-//        radius = in.readDouble();
-//    }
+    @Override
+    public void writeOut(OutStream out) throws IOException {
+        out.writeObject(center);
+        out.writeDouble(radius);
+    }
+
+    @Override
+    public void readIn(InStream in) throws IOException {
+        center = (Vector)in.readObject();
+        radius = in.readDouble();
+    }
 }

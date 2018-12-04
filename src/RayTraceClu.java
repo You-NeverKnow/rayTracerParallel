@@ -246,7 +246,9 @@ public class RayTraceClu extends Job {
 class WorldTuple extends Tuple {
 	World world;
 
-	public WorldTuple() {}
+	public WorldTuple() {
+		world = new World();
+	}
 
 	public WorldTuple(World world) {
 		this.world = world;
