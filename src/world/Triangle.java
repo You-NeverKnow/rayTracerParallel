@@ -174,19 +174,19 @@ public class Triangle extends WorldObject {
         return boundingBox.getFirstCorner();
     }
 
-    @Override
-    public void writeOut(OutStream out) throws IOException {
-        out.writeObject(vertex1);
-        out.writeObject(vertex2);
-        out.writeObject(vertex3);
-    }
-
-    @Override
-    public void readIn(InStream inStream) throws IOException {
-        vertex1 = (Vector)inStream.readObject();
-        vertex2 = (Vector)inStream.readObject();
-        vertex3 = (Vector)inStream.readObject();
-    }
+//    @Override
+//    public void writeOut(OutStream out) throws IOException {
+//        out.writeObject(vertex1);
+//        out.writeObject(vertex2);
+//        out.writeObject(vertex3);
+//    }
+//
+//    @Override
+//    public void readIn(InStream inStream) throws IOException {
+//        vertex1 = (Vector)inStream.readObject();
+//        vertex2 = (Vector)inStream.readObject();
+//        vertex3 = (Vector)inStream.readObject();
+//    }
 
     @Override
     public String toString() {
