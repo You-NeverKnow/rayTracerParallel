@@ -463,8 +463,7 @@ class RayTraceWorker extends Task{
 		Vector lightSamplePoint = new Vector();
 		Ray shadowRay = new Ray();
 
-		shadowRay.origin.set(hitData.intersectionPoint.add(
-											hitData.normal.multiply(1e-10)));
+		shadowRay.origin.set(hitData.intersectionPoint.add(hitData.normal.multiply(1e-10)));
 		Vector shadowRayDirection;
 		double x, z;
 		int lightHitCounter = 0;
@@ -488,6 +487,8 @@ class RayTraceWorker extends Task{
 					(shadowRayHitData.hitObject == world.triangleLights[0] ||
 					shadowRayHitData.hitObject == world.triangleLights[1])
 			) {
+				System.out.println("light hit");
+				System.out.flush();
 				lightHitCounter += 1;
 
 			}
@@ -502,6 +503,9 @@ class RayTraceWorker extends Task{
 
 		float b = lightHitCounter * hitData.color.blue();
 		b /= nSamples;
+
+		System.out.println("hit" + r + ":" + g  + ":" + b);
+		System.out.flush();
 
 		hitData.color.rgb(r/256f, g/256f, b/256f);
 		return hitData.color;
