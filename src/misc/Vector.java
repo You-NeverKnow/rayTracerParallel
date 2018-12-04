@@ -1,6 +1,12 @@
 package misc;
 
-public class Vector {
+import edu.rit.io.InStream;
+import edu.rit.io.OutStream;
+import edu.rit.io.Streamable;
+
+import java.io.IOException;
+
+public class Vector implements Streamable {
 	public double x;
 	public double y;
 	public double z;
@@ -27,6 +33,19 @@ public class Vector {
 		this.x = arr[0];
 		this.y = arr[1];
 		this.z = arr[2];
+	}
+
+	@Override
+	public void writeOut(OutStream out) throws IOException {
+		out.writeDouble(x);
+		out.writeDouble(y);
+		out.writeDouble(z);
+	}
+
+	public void readIn(InStream in) throws IOException {
+		x = in.readDouble();
+		y = in.readDouble();
+		z = in.readDouble();
 	}
 
 	public Vector add(Vector point) {

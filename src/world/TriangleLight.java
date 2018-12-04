@@ -1,10 +1,12 @@
 package world;
 
+import edu.rit.io.InStream;
+import edu.rit.io.OutStream;
 import misc.Vector;
 
-import java.io.Serializable;
+import java.io.IOException;
 
-public class TriangleLight extends Triangle implements Serializable {
+public class TriangleLight extends Triangle {
     public Vector direction;
 
     public TriangleLight(Vector vertex1, Vector vertex2, Vector vertex3, Vector direction) {
@@ -18,4 +20,15 @@ public class TriangleLight extends Triangle implements Serializable {
         this.direction.transform(transformMatrix);
     }
 
+    @Override
+    public void writeOut(OutStream out) throws IOException {
+        super.writeOut(out);
+        out.writeObject(direction);
+    }
+
+    @Override
+    public void readIn(InStream in) throws IOException {
+        super.readIn(in);
+        direction = (Vector)in.readObject();
+    }
 }

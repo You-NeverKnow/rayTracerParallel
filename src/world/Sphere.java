@@ -1,9 +1,13 @@
 package world;
 
+import edu.rit.io.InStream;
+import edu.rit.io.OutStream;
 import misc.BoundingBox;
 import misc.IntersectionData;
 import misc.Ray;
 import misc.Vector;
+
+import java.io.IOException;
 
 public class Sphere extends WorldObject {
 
@@ -107,4 +111,15 @@ public class Sphere extends WorldObject {
         return boundingBox.getFirstCorner();
     }
 
+    @Override
+    public void writeOut(OutStream out) throws IOException {
+        out.writeObject(center);
+        out.writeDouble(radius);
+    }
+
+    @Override
+    public void readIn(InStream in) throws IOException {
+        center = (Vector)in.readObject();
+        radius = in.readDouble();
+    }
 }

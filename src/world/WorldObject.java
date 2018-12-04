@@ -1,15 +1,14 @@
 package world;
 
 import edu.rit.image.Color;
+import edu.rit.io.Streamable;
 import misc.IntersectionData;
 import misc.Ray;
-
-import java.io.Serializable;
 
 /**
  * world
  */
-public abstract class WorldObject implements Serializable {
+public abstract class WorldObject implements Streamable {
     public Color color = new Color().rgb(0);
     public abstract void transform(double[][] transformMatrix);
     public abstract IntersectionData intersect(Ray ray);

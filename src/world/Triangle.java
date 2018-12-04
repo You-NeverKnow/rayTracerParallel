@@ -1,10 +1,15 @@
 package world;
 
+import edu.rit.io.InStream;
+import edu.rit.io.OutStream;
+import edu.rit.io.Streamable;
 import misc.BoundingBox;
 import misc.IntersectionData;
 import misc.Ray;
 import misc.Vector;
 import edu.rit.image.Color;
+
+import java.io.IOException;
 
 
 /**
@@ -170,6 +175,20 @@ public class Triangle extends WorldObject {
     }
 
     @Override
+    public void writeOut(OutStream out) throws IOException {
+        out.writeObject(vertex1);
+        out.writeObject(vertex2);
+        out.writeObject(vertex3);
+    }
+
+    @Override
+    public void readIn(InStream inStream) throws IOException {
+        vertex1 = (Vector)inStream.readObject();
+        vertex2 = (Vector)inStream.readObject();
+        vertex3 = (Vector)inStream.readObject();
+    }
+
+    @Override
     public String toString() {
         return "Triangle{" +
                 "vertex1=" + vertex1 +
@@ -178,4 +197,6 @@ public class Triangle extends WorldObject {
                 ", normal=" + normal +
                 '}';
     }
+
+
 }
