@@ -4,10 +4,12 @@ import edu.rit.image.Color;
 import misc.IntersectionData;
 import misc.Ray;
 
+import java.io.Serializable;
+
 /**
  * world
  */
-public abstract class WorldObject {
+public abstract class WorldObject implements Serializable {
     public Color color = new Color().rgb(0);
     public abstract void transform(double[][] transformMatrix);
     public abstract IntersectionData intersect(Ray ray);
