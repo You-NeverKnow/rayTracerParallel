@@ -158,7 +158,7 @@ public class RayTraceClu extends Job {
 		double x, y, z;
 		int idx1, idx2, idx3;
 		Triangle t;
-		Vector v1, v2, v3;
+		Vector v0, v1, v2, v3;
 		Color color = new Color().rgb(0,250,250);
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
@@ -195,19 +195,24 @@ public class RayTraceClu extends Job {
 		}
 
 		// Add lights
+		v0 = new Vector(75 - 150, 60+540 - 1e-12, -850);
 		v1 = new Vector(75 - 150, 60+540 - 1e-12, -1100);
 		v2 = new Vector(75 + 150, 60+540 - 1e-12, -850);
 		v3 = new Vector(75 + 150, 60+540 - 1e-12, -1100);
 
-		Triangle light = new Triangle(v1, v2, v3);
-		light.color.rgb(1f, 1f, 1f);
+		Triangle light0 = new Triangle(v1, v0, v2);
+		Triangle light1 = new Triangle(v1, v2, v3);
+		light0.color.rgb(1f, 1f, 1f);
+		light1.color.rgb(1f, 1f, 1f);
 
-		worldObjects.add(light);
+		worldObjects.add(light0);
+		worldObjects.add(light1);
 
 		// Light objects add
-		world.triangleLights = new WorldObject[1];
+		world.triangleLights = new WorldObject[2];
 
-		world.triangleLights[0] = light;
+		world.triangleLights[0] = light0;
+		world.triangleLights[1] = light1;
 		world.worldObjects = new WorldObject[worldObjects.size()];
 		world.worldObjects = worldObjects.toArray(world.worldObjects);
 
@@ -219,8 +224,8 @@ public class RayTraceClu extends Job {
 		int height = 1080;
 		int width = 1080;
 		//loadScene("scene/Mig-31 Foxhound.obj",world);
-		//create_scene(world);
-		loadScene("scene/sample.obj", world);
+		create_scene(world);
+		//loadScene("scene/sample.obj", world);
 		System.out.println("Loaded scene");
 		System.out.flush();
 
@@ -348,17 +353,11 @@ class RayTraceWorker extends Task{
 	int focalLength;
 	double projectionZ;
 
-	// For writing PNG image file.
-	ColorPngWriter writer;
-	ColorImageQueue imageQueue;
-	File filename;
-
 	public void setCamera(Vector eyePoint, Vector lookAt, Vector up, int focalLength) {
 		this.eyePoint = eyePoint;
 		this.lookAt = lookAt;
 		this.up = up;
 		this.focalLength = focalLength;
-		this.filename = new File("../output/renderedImage.png");
 	}
 
 	private void render(final World world,final int width,final int height)
@@ -387,12 +386,6 @@ class RayTraceWorker extends Task{
 		};
 		world.transform(transformMatrix);
 
-
-		// Set up file for writing image
-		filename.setReadable(true, false);
-		filename.setWritable(true, false);
-		imageQueue = writer.getImageQueue();
-		
 
 		// Init projection plane
 		final Vector imageOrigin = new Vector(-width/2.0, -height/2.0,
@@ -435,8 +428,11 @@ class RayTraceWorker extends Task{
 					ray.direction.set(pixelPosition);
 
 					// Get color for pixel
+//					System.out.println("col:" + col);
+//					System.out.flush();
 					pixelRow.color(col, getRadiance(ray, world, sampler));
 				}
+
 				putTuple(new ImgTuple(row, pixelRow));
 			}//run method ends
 
@@ -550,7 +546,7 @@ class RayTraceWorker extends Task{
 		int width = Integer.parseInt(args[1]);
 		
 		//setCameraSeq(eyePoint, lookAt, up, focalLength);
-
+		System.out.println(world);
 		render(world, width, height);
 	}
 

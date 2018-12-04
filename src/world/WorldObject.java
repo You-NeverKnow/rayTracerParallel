@@ -20,4 +20,6 @@ public abstract class WorldObject implements Streamable {
     // gets the vector of first corner stored in bounding box.
     // of a world object
     public abstract misc.Vector getFirstCorner();
+
+    public abstract String toString();
 }

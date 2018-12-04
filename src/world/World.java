@@ -13,7 +13,15 @@ public class World {
         for (WorldObject worldObject: worldObjects) {
             worldObject.transform(transformMatrix);
         }
+    }
 
+    @Override
+    public String toString() {
+        String res = "";
+        for (int i = 0; i < worldObjects.length; i++) {
+            res += worldObjects[i].toString() + "\n";
+        }
 
+        return res;
     }
 }
