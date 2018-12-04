@@ -134,8 +134,8 @@ public class RayTraceClu extends Job {
 
 		Triangle light1 = new Triangle(vertex1, vertex0, vertex2);
 		Triangle light2 = new Triangle(vertex1, vertex2, vertex3);
-		light1.color.rgb(1f, 1f, 1f);
-		light2.color.rgb(1f, 1f, 1f);
+		light1.color.rgb(0.9f, 0.9f, 0.9f);
+		light2.color.rgb(0.9f, 0.9f, 0.9f);
 
 		world.worldObjects[12] = light1;
 		world.worldObjects[13] = light2;
@@ -202,8 +202,8 @@ public class RayTraceClu extends Job {
 
 		Triangle light0 = new Triangle(v1, v0, v2);
 		Triangle light1 = new Triangle(v1, v2, v3);
-		light0.color.rgb(1f, 1f, 1f);
-		light1.color.rgb(1f, 1f, 1f);
+		light0.color.rgb(0.9f, 0.9f, 0.9f);
+		light1.color.rgb(0.9f, 0.9f, 0.9f);
 
 		worldObjects.add(light0);
 		worldObjects.add(light1);
