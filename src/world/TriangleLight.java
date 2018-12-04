@@ -9,6 +9,9 @@ import java.io.IOException;
 public class TriangleLight extends Triangle {
     public Vector direction;
 
+    //streamable compliance
+    public TriangleLight(){}
+
     public TriangleLight(Vector vertex1, Vector vertex2, Vector vertex3, Vector direction) {
         super(vertex1, vertex2, vertex3);
         this.direction = direction;

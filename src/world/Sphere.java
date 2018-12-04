@@ -16,6 +16,9 @@ public class Sphere extends WorldObject {
 
     BoundingBox boundingBox;
 
+    //streamable compliance
+    public Sphere(){}
+
     public Sphere(double radius, Vector center) {
         this.radius = radius;
         this.center = center;
