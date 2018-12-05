@@ -39,7 +39,6 @@ public class Camera {
         // Normalize vectors
         n.normalize();
         double projectionZ = n.multiply(-focalLength).z;
-        System.out.println("ProjectionZ: "+ projectionZ);
         up.normalize();
 
         // define u, v
