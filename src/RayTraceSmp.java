@@ -6,10 +6,12 @@ import edu.rit.image.ColorArray;
 import edu.rit.image.ColorImageQueue;
 import edu.rit.image.ColorPngWriter;
 import edu.rit.util.Random;
+import edu.rit.io.FileResource;
 import world.*;
 import misc.IntersectionData;
 import misc.Ray;
 import misc.Vector;
+
 
 import java.io.*;
 import java.util.ArrayList;
@@ -82,7 +84,7 @@ public class RayTraceSmp extends Task{
 		parallelDo (
 			new Section() {
 				public void run() {
-					parallelFor (0, height-1). schedule(guided).exec (new Loop() {
+					parallelFor (0, height-1). schedule(leapfrog).exec (new Loop() {
 						ColorArray pixelRow;
 						Ray ray;
 						Vector pixelPosition;
@@ -93,7 +95,6 @@ public class RayTraceSmp extends Task{
 							pixelPosition = new Vector(0, 0, projectionZ);
 						}
 						public void run (int row) throws Exception {
-							
 							//skip even numbers saves ALOT of computation!!
 							// if (oddNumber % 2 == 0) {
 							// 	return;
@@ -114,7 +115,11 @@ public class RayTraceSmp extends Task{
 
 								// Get color for pixel
 								pixelRow.color(col, getRadiance(ray, world, sampler));
+								// System.out.println("col:" +col);
+								// System.out.flush();
 							}
+							System.out.println(row);
+							System.out.flush();
 							imageQueue.put(imageQueue.rows() - 1 - row, pixelRow);
 						}//run method ends
 
@@ -124,6 +129,8 @@ public class RayTraceSmp extends Task{
 
 			new Section()  {
 				public void run() throws Exception {
+					System.out.println("write");
+					System.out.flush();
 					writer.write();
 				}
 			}
@@ -346,9 +353,9 @@ public class RayTraceSmp extends Task{
 	}
 
 
-	public static void loadScene(String filename,World world) {
+	public static void loadScene(String filename,World world) throws IOException{
 
-		File f = new File(filename);
+		File f = new FileResource(filename).file();
 		String line;
 		String elems[];
 		ArrayList<WorldObject> worldObjects = new ArrayList<>(4000);
@@ -356,56 +363,66 @@ public class RayTraceSmp extends Task{
 		double x, y, z;
 		int idx1, idx2, idx3;
 		Triangle t;
-		Vector v1, v2, v3;
+		Vector v0, v1, v2, v3;
 		Color color = new Color().rgb(0,250,250);
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
 
 			while ( (line = reader.readLine()) != null) {
+				line = line.replaceAll("\\s+", " ");
 				System.out.println("iter");
 				System.out.flush();
 				elems = line.trim().split(" ");
-
-				if (elems[0].equals("v")) {
+				if (elems.length > 0) {
+					if (elems[0].equals("v")) {
 
 					// v x y z
-					x = Double.parseDouble(elems[1]);
-					y = Double.parseDouble(elems[2]);
-					z = 850 + Double.parseDouble(elems[3]);
-					positions.add(new Vector(x, y, z));
-				} else if (elems[0].equals("f")) {
+						x = Double.parseDouble(elems[1]) * 50;
+						y = Double.parseDouble(elems[2]) * 50;
+						z = -850 + Double.parseDouble(elems[3]) * 50;
+						positions.add(new Vector(x, y, z));
+					} else if (elems[0].equals("f")) {
 
-					//f v/vt/vn v/vt/vn v/vt/vn
-					//ignore vt and vn
-					idx1 = Integer.parseInt(elems[1].split("/")[0])-1;
-					idx2 = Integer.parseInt(elems[2].split("/")[0])-1;
-					idx3 = Integer.parseInt(elems[3].split("/")[0])-1;
+						//f v/vt/vn v/vt/vn v/vt/vn
+						//ignore vt and vn
+						idx1 = Integer.parseInt(elems[1].split("/")[0])-1;
+						idx2 = Integer.parseInt(elems[2].split("/")[0])-1;
+						idx3 = Integer.parseInt(elems[3].split("/")[0])-1;
 
-					worldObjects.add(new Triangle(positions.get(idx1), positions.get(idx2), positions.get(idx3), color));
+						worldObjects.add(new Triangle(positions.get(idx1), positions.get(idx2), positions.get(idx3), color));
+
+					}
 
 				}
-
+				
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			System.err.flush();
+			System.out.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		// Add lights
+		v0 = new Vector(75 - 150, 60+540 - 1e-12, -850);
 		v1 = new Vector(75 - 150, 60+540 - 1e-12, -1100);
 		v2 = new Vector(75 + 150, 60+540 - 1e-12, -850);
 		v3 = new Vector(75 + 150, 60+540 - 1e-12, -1100);
 
-		Triangle light = new Triangle(v1, v2, v3);
-		light.color.rgb(1f, 1f, 1f);
+		Triangle light0 = new Triangle(v1, v0, v2);
+		Triangle light1 = new Triangle(v1, v2, v3);
+		light0.color.rgb(0.9f, 0.9f, 0.9f);
+		light1.color.rgb(0.9f, 0.9f, 0.9f);
 
-		worldObjects.add(light);
+		worldObjects.add(light0);
+		worldObjects.add(light1);
 
 		// Light objects add
-		world.triangleLights = new WorldObject[1];
+		world.triangleLights = new WorldObject[2];
 
-		world.triangleLights[0] = light;
+		world.triangleLights[0] = light0;
+		world.triangleLights[1] = light1;
 		world.worldObjects = new WorldObject[worldObjects.size()];
 		world.worldObjects = worldObjects.toArray(world.worldObjects);
 
@@ -414,10 +431,15 @@ public class RayTraceSmp extends Task{
 	public void main(String[] args) throws Exception {
 
 		World world = new World();
-		System.out.println("Hello");
+		System.out.println(new java.io.File( "." ).getCanonicalPath());
 		System.out.flush();
 		//loadScene("scene/Mig-31 Foxhound.obj",world);
-		loadScene("scene/sample.obj", world);
+		loadScene("scene/Mig_31_Foxhound.obj", world);
+		// String s[] = "v  1.6082 1.3900 -0.5142".split(" ");
+		// for (int i=0; i<s.length; i++) {
+		// 	System.out.println(s[i]);
+		// 	System.out.flush();
+		// }
 		//create_scene(world);
 		System.out.println("Loaded scene");
 		System.out.flush();
@@ -428,7 +450,8 @@ public class RayTraceSmp extends Task{
 		filename = new File("../output/renderedImage.png");
 		
 		//setCameraSeq(eyePoint, lookAt, up, focalLength);
-
+		System.out.println(world.worldObjects.length);
+		System.out.flush();
 		render(world, 1080, 1080);
 	}
 

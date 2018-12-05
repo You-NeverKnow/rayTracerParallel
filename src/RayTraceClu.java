@@ -329,7 +329,7 @@ class ImgMaker extends Task {
 
 					for (int i = 0; i < height; i++) {
 						tuple = (ImgTuple)takeTuple(template);
-						imageQueue.put(tuple.row, tuple.pixelData);
+						imageQueue.put(height - tuple.row - 1, tuple.pixelData);
 					}
 
 				}
@@ -487,8 +487,8 @@ class RayTraceWorker extends Task{
 					(shadowRayHitData.hitObject == world.triangleLights[0] ||
 					shadowRayHitData.hitObject == world.triangleLights[1])
 			) {
-				System.out.println("light hit");
-				System.out.flush();
+				// System.out.println("light hit");
+				// System.out.flush();
 				lightHitCounter += 1;
 
 			}
@@ -504,8 +504,8 @@ class RayTraceWorker extends Task{
 		float b = lightHitCounter * hitData.color.blue();
 		b /= nSamples;
 
-		System.out.println("hit" + r + ":" + g  + ":" + b);
-		System.out.flush();
+		// System.out.println("hit" + r + ":" + g  + ":" + b);
+		// System.out.flush();
 
 		hitData.color.rgb(r/256f, g/256f, b/256f);
 		return hitData.color;

@@ -34,4 +34,14 @@ public class TriangleLight extends Triangle {
         super.readIn(in);
         direction = (Vector)in.readObject();
     }
+    
+    public String toString() {
+        return "TriangleLight{" +
+                "vertex1=" + vertex1 +
+                ", vertex2=" + vertex2 +
+                ", vertex3=" + vertex3 +
+                ", normal=" + normal +
+                ', light=1 }';
+    }
+
 }
