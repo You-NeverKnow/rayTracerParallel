@@ -1,17 +1,20 @@
 import World.World;
 import World.WorldObject;
-import edu.rit.image.Color;
 import edu.rit.image.ColorArray;
 import edu.rit.image.ColorImageQueue;
 import edu.rit.image.ColorPngWriter;
+import edu.rit.pj2.Loop;
+import edu.rit.pj2.Task;
 import edu.rit.util.Random;
 import miscellaneous.IntersectionData;
 import miscellaneous.Ray;
 import miscellaneous.Vector;
+import java.io.IOException;
+
 
 import java.io.*;
 
-public class Camera {
+public class RayTraceSmp extends Task {
     Vector eyePoint;
     Vector lookAt;
     Vector up;
@@ -20,10 +23,26 @@ public class Camera {
     // For writing PNG image file.
     ColorPngWriter writer;
     ColorImageQueue imageQueue;
-    ColorArray pixelRow;
     File filename;
+    final World world = new World();
 
-    public Camera(Vector eyePoint, Vector lookAt, Vector up, int focalLength) {
+    @Override
+    public void main(String[] args) throws Exception {
+
+        CreateScene.create_scene(world);
+
+        Vector eyePoint = new Vector(75, 60, 540);
+        Vector lookAt = new Vector(75, 60, 530);
+        Vector up = new Vector(0, 1, 0);
+
+        int width = Integer.parseInt(args[0]);
+        int height = Integer.parseInt(args[1]);
+
+        setCamera(eyePoint, lookAt, up,1080);
+        render(width, height);
+    }
+
+    public void setCamera(Vector eyePoint, Vector lookAt, Vector up, int focalLength) throws IOException {
         this.eyePoint = eyePoint;
         this.lookAt = lookAt;
         this.up = up;
@@ -31,15 +50,16 @@ public class Camera {
         this.filename = new File("../output/renderedImage.png");
     }
 
-    public void render(World world, int width, int height)
+    public void render(int _width, int height)
             throws InterruptedException, IOException {
+
+        final int width = _width;
 
         Vector n = eyePoint.subtract(lookAt);
 
         // Normalize vectors
         n.normalize();
-        double projectionZ = n.multiply(-focalLength).z;
-        System.out.println("ProjectionZ: "+ projectionZ);
+        final double projectionZ = n.multiply(-focalLength).z;
         up.normalize();
 
         // define u, v
@@ -64,44 +84,56 @@ public class Camera {
         filename.setReadable(true, false);
         filename.setWritable(true, false);
         imageQueue = writer.getImageQueue();
-        pixelRow = new ColorArray (width);
 
         // Init projection plane
-        Vector imageOrigin = new Vector(-540, -540, projectionZ);
+        final Vector imageOrigin = new Vector(-540, -540, projectionZ);
+        final Random sampler = new Random(42);
 
-        Ray ray = new Ray();
-        Vector pixelPosition = new Vector(0, 0, projectionZ);
-        Random sampler = new Random(42);
-
-        // Max color --> multiplier must be equal to color of light source
-        // in getRadiance --> = nSamples
-        Vector maxColor = new Vector(1, 1, 1).multiply(55);
+        // Max color
+        final Vector maxColor = new Vector(1, 1, 1).multiply(550);
 
         // Iterate over all pixels, and compute radiance
-        double widthFactor = width/1080.0;
-        double heightFactor = height/1080.0;
+        final double widthFactor = width/1080.0;
+        final double heightFactor = height/1080.0;
 
-        for (int row = 0; row < height; row ++) {
-            for (int col = 0; col < width; col ++) {
+        parallelFor(0, height - 1).exec(new Loop() {
+            ColorArray pixelRow;
+            Ray ray;
+            Vector pixelPosition;
 
-                // Get current pixel position
-                pixelPosition.x = imageOrigin.x + col/heightFactor;
-                pixelPosition.y = imageOrigin.y + row/widthFactor;
-                pixelPosition.z = projectionZ;
+            @Override
+            public void start() throws Exception {
+                pixelRow = new ColorArray (width);
+                ray = new Ray();
+                pixelPosition = new Vector(0, 0, projectionZ);
 
-                ray.origin.set(pixelPosition);
-                pixelPosition.normalize();
-
-                // Init ray
-                ray.direction.set(pixelPosition);
-
-                // Get color for pixel
-                pixelRow.color(col,
-                        Vector._convertVectorColor( getRadiance(ray, world,
-                                            sampler, 3), maxColor));
             }
-            imageQueue.put(imageQueue.rows() - 1 - row, pixelRow);
-        }
+
+            @Override
+            public void run(int row) throws Exception {
+
+                for (int col = 0; col < width; col++) {
+
+                    // Get current pixel position
+                    pixelPosition.x = imageOrigin.x + col/heightFactor;
+                    pixelPosition.y = imageOrigin.y + row/widthFactor;
+                    pixelPosition.z = projectionZ;
+
+                    ray.origin.set(pixelPosition);
+                    pixelPosition.normalize();
+
+                    // Init ray
+                    ray.direction.set(pixelPosition);
+
+                    // Get color for pixel
+                    pixelRow.color(col,
+                            Vector._convertVectorColor( getRadiance(ray, world,
+                                                sampler, 3), maxColor));
+                }
+
+                imageQueue.put(imageQueue.rows() - 1 - row, pixelRow);
+            }
+        });
 
         writer.write();
     }
@@ -117,7 +149,7 @@ public class Camera {
             // Point is inside light source
             if (hitData.hitObject == world.triangleLights[0] ||
                     hitData.hitObject == world.triangleLights[1]) {
-                return new Vector(1f, 1f, 1f).multiply(55);
+                return new Vector(1f, 1f, 1f).multiply(550);
             }
             // Point is outside light source, somewhere in scene
             adjustColorWRTLightSource(hitData, world, sampler);
@@ -141,7 +173,7 @@ public class Camera {
         Vector illumination = new Vector();
         double kr = hitData.hitObject.phong.kr;
         double kt = hitData.hitObject.phong.kt;
-        Vector s = hitData.intersectionDirection.multiply(1);
+                Vector s = hitData.intersectionDirection.multiply(1);
 
 
         // Add reflective radiance
@@ -150,6 +182,7 @@ public class Camera {
             r.normalize();
             Ray reflectedRay = new Ray(hitData.intersectionPoint, r);
 
+            // Multiply with -1?
             illumination.selfAdd(getRadiance(reflectedRay, world, sampler,
                                                 depth-1).multiply(kr));
         }
@@ -158,7 +191,7 @@ public class Camera {
             // assuming light transport medium is air
             double relativeRefractionIndex = hitData.hitObject.refractiveIndex;
             Vector refractedRayDirection = Vector._getRefractedRay(
-                                                    s, hitData.normal,
+                                s, hitData.normal,
                             1/relativeRefractionIndex);
 
             // Total internal reflection
@@ -170,15 +203,12 @@ public class Camera {
                                                 depth-1).multiply(kt));
 
             } else {
-                Ray refractedRay = new Ray(hitData.intersectionPoint.add(
-                        hitData.normal.multiply(-1e-9)), refractedRayDirection);
-                IntersectionData internalHitData =
-                        hitData.hitObject.intersect(refractedRay);
+                Ray refractedRay = new Ray(hitData.intersectionPoint.add(hitData.normal.multiply(-1e-9)), refractedRayDirection);
+                IntersectionData internalHitData = hitData.hitObject.intersect(refractedRay);
 
                 refractedRayDirection = Vector._getRefractedRay(
-                                            refractedRayDirection,
-                                            internalHitData.normal.multiply(-1),
-                                            relativeRefractionIndex);
+                            refractedRayDirection, internalHitData.normal.multiply(-1),
+                            relativeRefractionIndex);
 
                 refractedRay.origin.set(internalHitData.intersectionPoint);
                 refractedRay.direction.set(refractedRayDirection);
@@ -201,7 +231,7 @@ public class Camera {
         Vector shadowRayDirection;
         double x, z;
         int lightHitCounter = 0;
-        int nSamples = 50;
+        int nSamples = 500;
         hitData.lights = new Vector[nSamples];
 
         for (int i = 0; i < nSamples; i++) {
@@ -267,4 +297,6 @@ public class Camera {
     }
 
 
+
 }
+

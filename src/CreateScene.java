@@ -1,17 +1,12 @@
 import World.World;
-import World.Sphere;
-import World.Triangle;
 import World.WorldObject;
+import World.Triangle;
+import World.Sphere;
 import miscellaneous.Phong;
 import miscellaneous.Vector;
-import java.io.IOException;
 
-/**
- * Main
- */
-public class Main {
-
-    private static void create_scene(World world) {
+public class CreateScene {
+        public static void create_scene(World world) {
         world.worldObjects = new WorldObject[14];
 
         int x1, x2, y1, y2, z1, z2;
@@ -32,8 +27,8 @@ public class Main {
 
         // Floor
         ka = new Vector(1, 1, 1);
-        kd = new Vector(0.6, 0.1, 0.1);
-        ks = new Vector(0.3, 0.1, 0.1);
+        kd = new Vector(0.3, 0.6, 0.3);
+        ks = new Vector(0.3, 0.3, 0.3);
         ke = 1;
 
         kr = 0;
@@ -48,14 +43,13 @@ public class Main {
 
 	    Triangle halfFloor1 = new Triangle(vertex1, vertex0, vertex2);
 	    Triangle halfFloor2 = new Triangle(vertex1, vertex2, vertex3);
-	    halfFloor1.color.rgb(1f, 0.0f, 0.0f);
-	    halfFloor2.color.rgb(1f, 0.0f, 0.0f);
+	    halfFloor1.color.rgb(0f, 0.49f, 0.0f);
+	    halfFloor2.color.rgb(0f, 0.49f, 0.0f);
 	    halfFloor1.setPhongModel(phong);
 	    halfFloor2.setPhongModel(phong);
 
 	    world.worldObjects[0] = halfFloor1;
 	    world.worldObjects[1] = halfFloor2;
-
 
         // Ceiling
         vertex0 = new Vector(x1, y2, z1);
@@ -70,12 +64,16 @@ public class Main {
 	    halfCeiling2.setPhongModel(phong);
 	    halfCeiling2.setPhongModel(phong);
 
-
 	    world.worldObjects[2] = halfCeiling1;
 	    world.worldObjects[3] = halfCeiling2;
 
-
         // Left side wall
+        ka = new Vector(1, 1, 1);
+        kd = new Vector(0.6, 0.6, 0.3);
+        ks = new Vector(0.3, 0.3, 0.3);
+        ke = 1;
+        phong.set(ka, kd, ks, ke, kr, kt, maxDepth);
+
         vertex0 = new Vector(x1, y1, z1);
         vertex1 = new Vector(x1, y1, z2);
         vertex2 = new Vector(x1, y2, z1);
@@ -83,8 +81,8 @@ public class Main {
 
 	    Triangle halfLeftWall1 = new Triangle(vertex0, vertex1, vertex2);
 	    Triangle halfLeftWall2 = new Triangle(vertex2, vertex1, vertex3);
-	    halfLeftWall1.color.rgb(0.59f, 0.0f, 0.0f);
-	    halfLeftWall2 .color.rgb(0.59f, 0.0f, 0.0f);
+	    halfLeftWall1.color.rgb(0.59f, 0.69f, 0.0f);
+	    halfLeftWall2 .color.rgb(0.59f, 0.69f, 0.0f);
         halfLeftWall1.setPhongModel(phong);
 	    halfLeftWall2.setPhongModel(phong);
 
@@ -100,8 +98,8 @@ public class Main {
 
 	    Triangle halfRightWall1 = new Triangle(vertex1, vertex0, vertex2);
 	    Triangle halfRightWall2 = new Triangle(vertex1, vertex2, vertex3);
-	    halfRightWall1.color.rgb(0.59f, 0.0f, 0.0f);
-	    halfRightWall2 .color.rgb(0.59f, 0.0f, 0.0f);
+	    halfRightWall1.color.rgb(0.59f, 0.69f, 0.0f);
+	    halfRightWall2 .color.rgb(0.59f, 0.69f, 0.0f);
         halfRightWall1.setPhongModel(phong);
 	    halfRightWall2.setPhongModel(phong);
 
@@ -115,10 +113,16 @@ public class Main {
         vertex2 = new Vector(x2, y1, z2);
         vertex3 = new Vector(x2, y2, z2);
 
+        ka = new Vector(1, 1, 1);
+        kd = new Vector(0.3, 0.6, 0.6);
+        ks = new Vector(0.3, 0.3, 0.3);
+        ke = 1;
+        phong.set(ka, kd, ks, ke, kr, kt, maxDepth);
+
 	    Triangle halfBackWall1 = new Triangle(vertex1, vertex0, vertex2);
 	    Triangle halfBackWall2 = new Triangle(vertex1, vertex2, vertex3);
-	    halfBackWall1.color.rgb(0.49f, 0.0f, 0.0f);
-	    halfBackWall2.color.rgb(0.49f, 0.0f, 0.0f);
+	    halfBackWall1.color.rgb(0, 0.39f, 0.79f);
+	    halfBackWall2.color.rgb(0, 0.39f, 0.79f);
         halfBackWall1.setPhongModel(phong);
 	    halfBackWall2.setPhongModel(phong);
 
@@ -146,15 +150,6 @@ public class Main {
         world.worldObjects[10] = sphere1;
 
         // Sphere 2
-        ka = new Vector(1, 1, 1);
-        kd = new Vector(0.3, 0.3, 0.3);
-        ks = new Vector(0.3, 0.3, 0.3);
-        ke = 1;
-        kr = 0;
-        kt = 0.8;
-        maxDepth = 1;
-        phong.set(ka, kd, ks, ke, kr, kt, maxDepth);
-
         radius = 120;
         center = new Vector(x2 - radius - 100, y1 + radius, z1 - radius - 100);
         Sphere sphere2 = new Sphere(radius, center);
@@ -185,20 +180,4 @@ public class Main {
 
     }
 
-    public static void main(String[] args)
-            throws IOException, InterruptedException {
-
-        World world = new World();
-        create_scene(world);
-
-        Vector eyePoint = new Vector(75, 60, 540);
-        Vector lookAt = new Vector(75, 60, 530);
-        Vector up = new Vector(0, 1, 0);
-
-        Camera camera = new Camera(eyePoint, lookAt, up,1080);
-        camera.render(world, 1080, 1080);
-    }
-    
-
 }
-

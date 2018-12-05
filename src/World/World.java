@@ -7,7 +7,6 @@ public class World {
     public void transform(double[][] transformMatrix) {
         for (WorldObject worldObject: worldObjects) {
             worldObject.transform(transformMatrix);
-            System.out.println(worldObject);
         }
 
 
